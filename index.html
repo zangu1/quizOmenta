@@ -6,49 +6,88 @@
 <title>Quiz - O Mentalista</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
 <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
+<!-- botões de som e tela cheia (sempre visíveis) -->
+<div class="utils">
+  <button id="btn-som" class="btn-util" type="button" aria-label="Ligar ou desligar o som" title="Som">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/>
+      <path class="ondas" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/>
+      <path class="corte" d="M16 9l6 6M22 9l-6 6"/>
+    </svg>
+  </button>
+  <button id="btn-tela-cheia" class="btn-util" type="button" aria-label="Tela cheia" title="Tela cheia">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  </button>
+</div>
+<canvas id="confete" aria-hidden="true"></canvas>
+
 <!-- ============ TELA INICIAL (fica parada na bancada) ============ -->
 <section id="tela-inicio" class="tela ativa">
   <div class="fundo-inicio" aria-hidden="true"></div>
 
-  <div class="conteudo-inicio container text-center">
-    <svg class="logo-detetive" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="50" cy="50" r="48" fill="#1b1d29" stroke="#c8102e" stroke-width="2"/>
-      <ellipse cx="50" cy="40" rx="16" ry="17" fill="#e8d4b8"/>
-      <path d="M28 34 Q50 8 72 34 L72 30 Q50 14 28 30 Z" fill="#14151f"/>
-      <rect x="24" y="26" width="52" height="8" rx="3" fill="#14151f"/>
-      <path d="M20 30 Q50 20 80 30 L80 34 Q50 26 20 34 Z" fill="#14151f"/>
-      <rect x="20" y="46" width="10" height="4" fill="#14151f"/>
-      <rect x="70" y="46" width="10" height="4" fill="#14151f"/>
-      <path d="M30 78 Q50 58 70 78 L70 92 L30 92 Z" fill="#c8102e"/>
-      <rect x="46" y="72" width="8" height="14" fill="#eceef4"/>
-    </svg>
+  <div class="container inicio-main">
+    <div class="row align-items-center g-4 g-lg-5 w-100 mx-0">
 
-    <p class="sobretitulo">Quiz para fãs da série</p>
-    <h1 class="titulo-grande">O Mentalista</h1>
-    <p class="pergunta-gancho">Você consegue ler as pessoas como Patrick Jane?</p>
+      <div class="col-lg-7 text-center text-lg-start inicio-texto">
+        <svg class="logo-detetive" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="48" fill="#1b1d29" stroke="#c8102e" stroke-width="2"/>
+          <ellipse cx="50" cy="40" rx="16" ry="17" fill="#e8d4b8"/>
+          <path d="M28 34 Q50 8 72 34 L72 30 Q50 14 28 30 Z" fill="#14151f"/>
+          <rect x="24" y="26" width="52" height="8" rx="3" fill="#14151f"/>
+          <path d="M20 30 Q50 20 80 30 L80 34 Q50 26 20 34 Z" fill="#14151f"/>
+          <rect x="20" y="46" width="10" height="4" fill="#14151f"/>
+          <rect x="70" y="46" width="10" height="4" fill="#14151f"/>
+          <path d="M30 78 Q50 58 70 78 L70 92 L30 92 Z" fill="#c8102e"/>
+          <rect x="46" y="72" width="8" height="14" fill="#eceef4"/>
+        </svg>
 
-    <button id="btn-comecar" class="btn btn-comecar" disabled>
-      <span class="spinner-border spinner-border-sm me-2" id="spin-inicio" role="status"></span>
-      <span id="txt-comecar">Carregando perguntas...</span>
-    </button>
-    <p class="dica-teclado d-none d-md-block" id="dica-inicio">ou pressione <kbd>Enter</kbd></p>
+        <p class="sobretitulo">Quiz para fãs da série</p>
+        <h1 class="titulo-grande">O Mentalista</h1>
+        <p class="pergunta-gancho">Você consegue ler as pessoas como Patrick Jane?</p>
 
-    <div id="info-quiz" class="info-quiz d-none">
-      <span><strong id="info-qtd">0</strong> perguntas</span>
-      <span class="sep">•</span>
-      <span><strong id="info-tempo">20</strong>s por pergunta</span>
-      <span class="sep d-none d-md-inline">•</span>
-      <span class="d-none d-md-inline">Dá pra jogar com <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd></span>
+        <button id="btn-comecar" class="btn btn-comecar" disabled>
+          <span class="spinner-border spinner-border-sm me-2" id="spin-inicio" role="status"></span>
+          <span id="txt-comecar">Carregando perguntas...</span>
+        </button>
+        <p class="dica-teclado d-none d-md-block" id="dica-inicio">ou pressione <kbd>Enter</kbd></p>
+
+        <div id="info-quiz" class="info-quiz d-none">
+          <span><strong id="info-qtd">0</strong> perguntas</span>
+          <span class="sep">•</span>
+          <span><strong id="info-tempo">20</strong>s por pergunta</span>
+          <span class="sep d-none d-md-inline">•</span>
+          <span class="d-none d-md-inline">Teclas <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd></span>
+        </div>
+
+        <div id="erro-inicio" class="alert alert-danger d-none mt-4" style="max-width:420px"></div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="polaroids" aria-hidden="true">
+          <figure class="polaroid p1">
+            <img src="img/simon-baker.jpg" alt="">
+            <figcaption>Patrick Jane</figcaption>
+          </figure>
+          <figure class="polaroid p2">
+            <img src="img/red-john.jpeg" alt="">
+            <figcaption>Red John</figcaption>
+          </figure>
+        </div>
+
+        <div id="ranking-inicio" class="ranking-card d-none">
+          <h3>Melhores detetives</h3>
+          <ol id="ranking-inicio-lista" class="ranking-lista"></ol>
+        </div>
+      </div>
+
     </div>
-
-    <div id="erro-inicio" class="alert alert-danger d-none mt-4 mx-auto" style="max-width:420px"></div>
   </div>
 
   <div class="curiosidade-wrap container">
@@ -63,11 +102,12 @@
 <section id="tela-quiz" class="tela">
   <div class="container quiz-container">
     <header class="quiz-topo">
+      <span class="badge-pergunta" id="badge-pergunta">PERGUNTA 1 DE 4</span>
       <div class="d-flex align-items-center gap-2">
-        <span class="badge-pergunta" id="badge-pergunta">PERGUNTA 1 DE 4</span>
-      </div>
-      <div class="placar-pill" id="placar">
-        <span class="estrela">&#9733;</span> <span id="placar-num">0</span>
+        <span id="sequencia" class="sequencia d-none"></span>
+        <div class="placar-pill" id="placar">
+          <span class="estrela">&#9733;</span> <span id="placar-num">0</span>
+        </div>
       </div>
     </header>
 
@@ -94,30 +134,52 @@
 
 <!-- ============ TELA FINAL ============ -->
 <section id="tela-fim" class="tela">
-  <div class="container text-center fim-container">
+  <div class="container fim-container">
     <div class="card card-quiz card-fim">
-      <p class="sobretitulo mb-1">Resultado</p>
-      <h2 id="fim-rank" class="rank-titulo"></h2>
-      <p id="fim-frase" class="text-secondary mb-3"></p>
+      <div class="row g-4 align-items-center">
 
-      <div class="anel" id="anel">
-        <svg viewBox="0 0 120 120">
-          <circle class="anel-fundo" cx="60" cy="60" r="52"/>
-          <circle class="anel-valor" id="anel-valor" cx="60" cy="60" r="52"/>
-        </svg>
-        <div class="anel-texto">
-          <span id="fim-pct">0%</span>
-          <small id="fim-detalhe">0 de 0</small>
+        <div class="col-md-6 text-center">
+          <p class="sobretitulo mb-1">Resultado</p>
+          <h2 id="fim-rank" class="rank-titulo"></h2>
+          <p id="fim-frase" class="text-secondary mb-2"></p>
+
+          <div class="anel" id="anel">
+            <svg viewBox="0 0 120 120">
+              <circle class="anel-fundo" cx="60" cy="60" r="52"/>
+              <circle class="anel-valor" id="anel-valor" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="anel-texto">
+              <span id="fim-pct">0%</span>
+              <small id="fim-detalhe">0 de 0</small>
+            </div>
+          </div>
+
+          <div id="fim-pontos" class="pontos-resumo" aria-label="Resumo das respostas"></div>
+          <p id="fim-extra" class="text-secondary small mt-2 mb-0"></p>
         </div>
+
+        <div class="col-md-6">
+          <form id="form-nome" class="form-nome" autocomplete="off">
+            <label for="input-nome" class="form-label small text-secondary mb-1">Entre no ranking</label>
+            <div class="input-group">
+              <input id="input-nome" class="form-control" maxlength="14" placeholder="Seu nome">
+              <button class="btn btn-salvar" type="submit">Salvar</button>
+            </div>
+          </form>
+
+          <div id="ranking-fim" class="ranking-card d-none mt-3">
+            <h3>Ranking</h3>
+            <ol id="ranking-fim-lista" class="ranking-lista"></ol>
+          </div>
+        </div>
+
       </div>
 
-      <div id="fim-pontos" class="pontos-resumo" aria-label="Resumo das respostas"></div>
-
-      <div class="d-grid gap-2 mt-4">
+      <div class="d-grid gap-2 mt-4 acoes-fim">
         <button id="btn-reiniciar" class="btn btn-comecar btn-sm-cta">Jogar novamente</button>
         <button id="btn-inicio" class="btn btn-link text-secondary">Voltar ao início</button>
       </div>
-      <p class="text-secondary small mt-3 mb-0" id="fim-auto"></p>
+      <p class="text-secondary small mt-2 mb-0 text-center" id="fim-auto"></p>
     </div>
   </div>
 </section>
