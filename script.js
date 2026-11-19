@@ -8,43 +8,19 @@ const TEMPO_REVELAR = 1800;       // ms mostrando certo/errado
 const OCIOSO_QUIZ = 60_000;       // volta ao início se ninguém mexer por 60s
 const SEGUNDOS_FIM = 30;          // tela final volta sozinha ao início
 const USAR_EXTRAS = true;         // false = só as perguntas da QuizAPI
-
-// Fotos por posição da pergunta. As demais recebem uma ilustração.
-const imagensPorIndice = {
-  0: { src: "img/simon-baker.jpg", alt: "Simon Baker" },
-  2: { src: "img/red-john.jpeg", alt: "Red John" },
-  3: { src: "img/red-john.jpeg", alt: "Red John" }
-};
-const iconesPorIndice = { 1: "distintivo" };
-
-// Ilustrações próprias (SVG, traço)
-const ICONES = {
-  distintivo: '<path d="M32 6 54 14V32C54 46 44 55 32 59 20 55 10 46 10 32V14Z"/><path d="M32 20 35.5 28 44 28.8 37.5 34.5 39.5 43 32 38.5 24.5 43 26.5 34.5 20 28.8 28.5 28Z"/>',
-  lupa: '<circle cx="26" cy="26" r="16"/><path d="M38 38 56 56"/><path d="M19 22a9 9 0 0 1 8-6"/>',
-  xicara: '<path d="M12 24H44V38C44 47 38 52 28 52 18 52 12 47 12 38Z"/><path d="M44 28H49A6 6 0 0 1 49 40H43"/><path d="M8 58H48"/><path d="M22 8C18 13 26 15 22 20M32 8C28 13 36 15 32 20"/>',
-  tv: '<rect x="8" y="16" width="48" height="32" rx="5"/><path d="M24 6 32 16 40 6M24 56H40M32 48V56"/>',
-  mapa: '<path d="M32 58C32 58 14 40 14 26A18 18 0 0 1 50 26C50 40 32 58 32 58Z"/><circle cx="32" cy="26" r="6"/>',
-  claquete: '<rect x="8" y="26" width="48" height="28" rx="3"/><path d="M8 26 14 12H56L50 26M22 12 16 26M34 12 28 26M46 12 40 26"/>',
-  lapis: '<path d="M12 52 16 40 44 12 52 20 24 48Z"/><path d="M38 18 46 26M12 52 24 48"/>',
-  pessoas: '<circle cx="22" cy="22" r="8"/><path d="M6 52C6 40 14 34 22 34 30 34 38 40 38 52"/><circle cx="44" cy="24" r="6"/><path d="M42 36C50 36 58 42 58 52"/>',
-  ator: '<circle cx="32" cy="22" r="10"/><path d="M12 56C12 42 21 36 32 36 43 36 52 42 52 56"/><path d="M28 36 32 44 36 36"/>',
-  filmes: '<rect x="8" y="10" width="48" height="44" rx="4"/><path d="M8 22H56M8 42H56M20 10V54M44 10V54"/>'
-};
+const QTD_POR_PARTIDA = 10;       // quantas perguntas por partida (sorteadas). 0 = todas
 
 // Perguntas extras, usadas depois das da QuizAPI (da mais fácil para a mais difícil).
 const perguntasExtras = [
   {
-    icone: "pessoas",
     text: "Qual é o primeiro nome da agente Lisbon, chefe da equipe da CBI?",
     answers: [{ text: "Grace" }, { text: "Teresa", isCorrect: true }, { text: "Angela" }, { text: "Charlotte" }]
   },
   {
-    icone: "pessoas",
     text: "Qual é o primeiro nome do agente Cho?",
     answers: [{ text: "Wayne" }, { text: "Patrick" }, { text: "Kimball", isCorrect: true }, { text: "Dennis" }]
   },
   {
-    icone: "distintivo",
     text: "O que significa a sigla CBI na série?",
     answers: [
       { text: "Central Bureau of Intelligence" },
@@ -54,7 +30,6 @@ const perguntasExtras = [
     ]
   },
   {
-    icone: "lupa",
     text: "Qual era o nome da esposa e da filha de Patrick Jane, assassinadas por Red John?",
     answers: [
       { text: "Teresa e Lucy" }, { text: "Grace e Sophie" }, { text: "Madeleine e Emily" },
@@ -62,7 +37,6 @@ const perguntasExtras = [
     ]
   },
   {
-    icone: "ator",
     text: "Qual atriz interpreta a agente Teresa Lisbon?",
     answers: [
       { text: "Robin Tunney", isCorrect: true }, { text: "Amanda Righetti" },
@@ -70,7 +44,6 @@ const perguntasExtras = [
     ]
   },
   {
-    icone: "tv",
     text: "Como Patrick Jane ficou famoso antes de trabalhar com a CBI?",
     answers: [
       { text: "Como ilusionista de cassino" }, { text: "Como detetive particular" },
@@ -79,24 +52,72 @@ const perguntasExtras = [
     ]
   },
   {
-    icone: "mapa",
     text: "Em qual cidade da Califórnia fica a base da CBI na série?",
     answers: [{ text: "Los Angeles" }, { text: "San Diego" }, { text: "San Francisco" }, { text: "Sacramento", isCorrect: true }]
   },
   {
-    icone: "ator",
     text: "Qual ator interpreta o agente Wayne Rigsby?",
     answers: [{ text: "Tim Kang" }, { text: "Owain Yeoman", isCorrect: true }, { text: "Rockmond Dunbar" }, { text: "Joe Spano" }]
   },
   {
-    icone: "lapis",
     text: "Quem criou a série O Mentalista?",
     answers: [{ text: "Vince Gilligan" }, { text: "Dick Wolf" }, { text: "Bruno Heller", isCorrect: true }, { text: "Shonda Rhimes" }]
   },
   {
-    icone: "filmes",
     text: "Quantos episódios a série tem no total, ao longo de suas 7 temporadas?",
     answers: [{ text: "98" }, { text: "124" }, { text: "151", isCorrect: true }, { text: "178" }]
+  },
+  {
+    text: "Qual emissora americana exibiu a série O Mentalista?",
+    answers: [{ text: "NBC" }, { text: "CBS", isCorrect: true }, { text: "ABC" }, { text: "Fox" }]
+  },
+  {
+    text: "Em que data a série estreou nos Estados Unidos?",
+    answers: [
+      { text: "15 de outubro de 2007" }, { text: "7 de janeiro de 2009" },
+      { text: "23 de setembro de 2008", isCorrect: true }, { text: "2 de março de 2010" }
+    ]
+  },
+  {
+    text: "Qual ator da série foi indicado ao Emmy de 2009 como melhor ator em série dramática?",
+    answers: [{ text: "Tim Kang" }, { text: "Owain Yeoman" }, { text: "Rockmond Dunbar" }, { text: "Simon Baker", isCorrect: true }]
+  },
+  {
+    text: "Em qual temporada, mais ou menos no meio dela, o caso Red John é solucionado?",
+    answers: [{ text: "3ª temporada" }, { text: "4ª temporada" }, { text: "6ª temporada", isCorrect: true }, { text: "7ª temporada" }]
+  },
+  {
+    text: "Qual ator interpreta Dennis Abbott, personagem do elenco principal na 6ª temporada?",
+    answers: [{ text: "Rockmond Dunbar", isCorrect: true }, { text: "Tim Kang" }, { text: "Owain Yeoman" }, { text: "Joe Spano" }]
+  },
+  {
+    text: "Em 2009, a série ganhou um prêmio da TCA (Television Critics Association). Em qual categoria?",
+    answers: [
+      { text: "Melhor ator em série dramática" }, { text: "Melhor roteiro" },
+      { text: "Melhor novo programa", isCorrect: true }, { text: "Melhor série cômica" }
+    ]
+  },
+  {
+    text: "Bruno Heller, criador de O Mentalista, também desenvolveu qual série da HBO?",
+    answers: [{ text: "Deadwood" }, { text: "The Wire" }, { text: "Oz" }, { text: "Rome", isCorrect: true }]
+  },
+  {
+    text: "Em que data terminou a série, com o fim da 7ª temporada?",
+    answers: [
+      { text: "12 de maio de 2014" }, { text: "18 de fevereiro de 2015", isCorrect: true },
+      { text: "29 de abril de 2015" }, { text: "25 de março de 2013" }
+    ]
+  },
+  {
+    text: "Quantos milhões de espectadores assistiram à estreia da série, em sua primeira exibição?",
+    answers: [{ text: "5,2 milhões" }, { text: "9,8 milhões" }, { text: "15,6 milhões", isCorrect: true }, { text: "22,4 milhões" }]
+  },
+  {
+    text: "Qual era o nome completo da filha de Patrick Jane?",
+    answers: [
+      { text: "Charlotte Rose Jane" }, { text: "Emily Anne Jane" },
+      { text: "Angela Charlotte Jane" }, { text: "Charlotte Anne Jane", isCorrect: true }
+    ]
   }
 ];
 
@@ -110,7 +131,8 @@ const curiosidades = [
 ];
 
 // ============ ESTADO ============
-let perguntas = [];
+let banco = [];       // todas as perguntas disponíveis
+let perguntas = [];   // perguntas da partida atual
 let indice = 0;
 let acertos = 0;
 let sequencia = 0;
@@ -199,9 +221,14 @@ function iniciarCuriosidades() {
 function pararCuriosidades() { clearInterval(curiosidadeId); }
 
 // ============ RANKING (salvo neste navegador) ============
+// Mudar o número abaixo (v3, v4...) zera o ranking de todo mundo.
+const CHAVE_RANKING = "mentalista_ranking_v2";
 function lerRanking() {
-  try { const l = JSON.parse(LS.ler("mentalista_ranking", "[]")); return Array.isArray(l) ? l : []; }
-  catch { return []; }
+  try {
+    const l = JSON.parse(LS.ler(CHAVE_RANKING, "[]"));
+    // só vale partida com a mesma quantidade de perguntas da atual
+    return Array.isArray(l) ? l.filter(r => r.total === totalPorPartida()) : [];
+  } catch { return []; }
 }
 function ordenarRanking(lista) {
   return lista.sort((a, b) => (b.acertos / b.total - a.acertos / a.total) || (a.ms - b.ms));
@@ -236,15 +263,16 @@ async function buscarPerguntas() {
       headers: { Authorization: `Bearer ${apiKey}` }
     });
 
-    perguntas = resposta.data.data;
-    if (!Array.isArray(perguntas) || perguntas.length === 0) throw new Error("Quiz sem perguntas");
-    if (USAR_EXTRAS) perguntas = [...perguntas, ...perguntasExtras];
+    banco = resposta.data.data;
+    if (!Array.isArray(banco) || banco.length === 0) throw new Error("Quiz sem perguntas");
+    if (USAR_EXTRAS) banco = [...banco, ...perguntasExtras];
 
     $("spin-inicio").classList.add("d-none");
     $("txt-comecar").textContent = "Começar o quiz";
     btn.disabled = false;
     btn.classList.add("pronto");
-    $("info-qtd").textContent = perguntas.length;
+    $("info-qtd").textContent = totalPorPartida();
+    renderRankingInicio();
     $("info-tempo").textContent = TEMPO_PERGUNTA;
     $("info-quiz").classList.remove("d-none");
   } catch (erro) {
@@ -259,7 +287,44 @@ async function buscarPerguntas() {
 }
 
 // ============ JOGO ============
+// perguntas já usadas nas últimas partidas (para não repetir enquanto houver novas)
+const vistas = new Set();
+
+function embaralhar(lista) {
+  const a = [...lista];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function totalPorPartida() {
+  return QTD_POR_PARTIDA ? Math.min(QTD_POR_PARTIDA, banco.length) : banco.length;
+}
+
+// sorteia as perguntas, a ordem delas e a ordem das alternativas
+function sortearPerguntas() {
+  const n = totalPorPartida();
+  const todas = banco.map((_, i) => i);
+  const novas = todas.filter(i => !vistas.has(i));
+
+  let escolhidas;
+  if (novas.length >= n) {
+    escolhidas = embaralhar(novas).slice(0, n);
+  } else {
+    // acabaram as novas: usa as que sobraram e completa com outras, recomeçando o ciclo
+    const completar = embaralhar(todas.filter(i => vistas.has(i))).slice(0, n - novas.length);
+    escolhidas = [...novas, ...completar];
+    vistas.clear();
+  }
+  escolhidas.forEach(i => vistas.add(i));
+
+  return embaralhar(escolhidas).map(i => ({ ...banco[i], answers: embaralhar(banco[i].answers) }));
+}
+
 function comecarQuiz() {
+  perguntas = sortearPerguntas();
   indice = 0;
   acertos = 0;
   sequencia = 0;
@@ -278,14 +343,6 @@ function mostrarPergunta() {
 
   $("badge-pergunta").textContent = `PERGUNTA ${indice + 1} DE ${perguntas.length}`;
   $("barra-geral").style.width = `${(indice / perguntas.length) * 100}%`;
-
-  const foto = imagensPorIndice[indice];
-  if (foto) {
-    $("area-imagem").innerHTML = `<img src="${foto.src}" alt="${esc(foto.alt)}" class="imagem-pergunta" />`;
-  } else {
-    const icone = ICONES[pergunta.icone || iconesPorIndice[indice]] || ICONES.lupa;
-    $("area-imagem").innerHTML = `<div class="ilustracao" aria-hidden="true"><svg viewBox="0 0 64 64">${icone}</svg></div>`;
-  }
 
   $("texto-pergunta").textContent = pergunta.text;
   $("feedback").textContent = "";
@@ -450,7 +507,7 @@ function salvarNoRanking(e) {
   const entrada = { id: Date.now(), nome, acertos, total: perguntas.length, ms: Math.round(tempoTotalMs) };
   const lista = lerRanking();
   lista.push(entrada);
-  LS.gravar("mentalista_ranking", JSON.stringify(ordenarRanking(lista).slice(0, 50)));
+  LS.gravar(CHAVE_RANKING, JSON.stringify(ordenarRanking(lista).slice(0, 50)));
 
   $("form-nome").classList.add("d-none");
   $("ranking-fim").classList.remove("d-none");
@@ -538,6 +595,11 @@ document.addEventListener("keydown", (e) => {
   if (e.target.tagName === "INPUT") return; // digitando o nome
   const btn = $("btn-comecar");
 
+  if (telaAtual === "inicio" && e.shiftKey && e.key === "Delete") {
+    e.preventDefault();
+    if (confirm("Zerar o ranking?")) { LS.gravar(CHAVE_RANKING, "[]"); renderRankingInicio(); }
+    return;
+  }
   if (telaAtual === "inicio" && (e.key === "Enter" || e.key === " ") && !btn.disabled && !btn.dataset.retry) {
     e.preventDefault();
     comecarQuiz();
